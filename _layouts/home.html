@@ -27,7 +27,21 @@ layout: base
       <li class="post-list-item">
         {%- if post.cover -%}
         <a class="post-image" href="{{ post.url | relative_url }}">
-          <img src="{{ post.cover | relative_url }}" alt="{{ post.title | escape }}" class="post-cover">
+          {%- if post.cover_small -%}
+            <img
+              class="post-cover lazy"
+              src="{{ post.cover_small | relative_url }}"
+              data-src="{{ post.cover | relative_url }}"
+              alt="{{ post.title | escape }}"
+              loading="lazy">
+          {%- else -%}
+            <img
+              class="post-cover lazy"
+              src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=="
+              data-src="{{ post.cover | relative_url }}"
+              alt="{{ post.title | escape }}"
+              loading="lazy">
+          {%- endif -%}
         </a>
         {%- endif -%}
         <div class="post-list-body">

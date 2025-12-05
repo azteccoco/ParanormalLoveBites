@@ -285,6 +285,26 @@
   }
 }
 
+/* Lazy-loading placeholder blur */
+img.post-cover.lazy {
+  filter: blur(12px) saturate(.95);
+  transform: scale(1.02);
+  transition: filter 450ms ease, transform 450ms ease, opacity 400ms ease;
+}
+
+img.post-cover.lazy.lazy-loaded {
+  filter: none;
+  transform: none;
+  opacity: 1;
+}
+
+/* Ensure thumbnails in post list also use the same blur behaviour */
+.post-list .post-image img.post-cover.lazy {
+  width: 120px;
+  height: 80px;
+  object-fit: cover;
+}
+
 .post-title,
 .post-content h1 {
   @include relative-font-size(2.625);

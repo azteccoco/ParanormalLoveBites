@@ -6,7 +6,21 @@ layout: base
   <header class="post-header">
     {%- if page.cover -%}
     <div class="post-cover-wrap">
-      <img src="{{ page.cover | relative_url }}" alt="{{ page.title | escape }}" class="post-cover">
+      {%- if page.cover_small -%}
+      <img
+        class="post-cover lazy"
+        src="{{ page.cover_small | relative_url }}"
+        data-src="{{ page.cover | relative_url }}"
+        alt="{{ page.title | escape }}"
+        loading="lazy">
+      {%- else -%}
+      <img
+        class="post-cover lazy"
+        src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=="
+        data-src="{{ page.cover | relative_url }}"
+        alt="{{ page.title | escape }}"
+        loading="lazy">
+      {%- endif -%}
     </div>
     {%- endif -%}
     <h1 class="post-title p-name" itemprop="name headline">{{ page.title | escape }}</h1>
