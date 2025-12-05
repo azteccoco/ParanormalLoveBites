@@ -222,6 +222,31 @@
   }
 }
 
+// Layout for posts list with optional cover image
+.post-list {
+  .post-list-item {
+    display: flex;
+    align-items: flex-start;
+  }
+
+  .post-image {
+    flex: 0 0 auto;
+    margin-right: $spacing-unit;
+
+    img.post-cover {
+      display: block;
+      width: 120px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+  }
+
+  .post-list-body {
+    flex: 1 1 auto;
+  }
+}
+
 .post-meta {
   font-size: $small-font-size;
   color: $brand-color;
