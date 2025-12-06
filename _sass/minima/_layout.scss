@@ -2,7 +2,7 @@
  * Site header
  */
 .site-header {
-  border-top: 5px solid $border-color-03;
+  //border-top: 5px solid $border-color-03;
   border-bottom: 1px solid $border-color-01;
   min-height: $spacing-unit * 1.865;
   line-height: $base-line-height * $base-font-size * 2.25;
@@ -287,7 +287,7 @@
 
 /* Lazy-loading placeholder blur */
 img.post-cover.lazy {
-  filter: blur(12px) saturate(.95);
+  filter: blur(5px) saturate(.95);
   transform: scale(1.02);
   transition: filter 450ms ease, transform 450ms ease, opacity 400ms ease;
 }
