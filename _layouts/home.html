@@ -24,6 +24,7 @@ layout: base
     <ul class="post-list">
       {%- assign date_format = site.minima.date_format | default: "%b %-d, %Y" -%}
       {%- for post in posts -%}
+      {%- unless post.type == "DRAFT" -%}
       <li class="post-list-item">
         {%- if post.cover -%}
         <a class="post-image" href="{{ post.url | relative_url }}">
@@ -56,6 +57,7 @@ layout: base
           {%- endif -%}
         </div>
       </li>
+      {%- endunless -%}
       {%- endfor -%}
     </ul>
 
