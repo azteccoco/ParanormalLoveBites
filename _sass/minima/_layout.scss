@@ -26,6 +26,27 @@
   &:visited {
     color: $site-title-color;
   }
+
+  /* Logo inside the site title */
+  .site-logo {
+    display: inline-block;
+    vertical-align: middle;
+    margin-right: $spacing-unit * .5;
+    width: 28px;
+    height: 28px;
+  }
+
+  .site-title-text {
+    display: inline-block;
+    vertical-align: middle;
+    line-height: 1;
+  }
+
+  @include media-query($on-palm) {
+    /* On small screens show only the logo */
+    .site-title-text { display: none; }
+    .site-logo { width: 36px; height: 36px; margin-right: 0; }
+  }
 }
 
 .site-nav {

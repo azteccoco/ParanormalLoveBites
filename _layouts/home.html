@@ -57,45 +57,7 @@ layout: base
   {% if site.paginate %}
     {% assign posts = paginator.posts %}
   {% else %}
-    {% assign posts = site.posts %}
-  {% endif %}
-
-
-  {%- if posts.size > 0 -%}
-    {%- if page.list_title -%}
-      <h2 class="post-list-heading">{{ page.list_title }}</h2>
-    {%- endif -%}
-    <ul class="post-list">
-      {%- assign date_format = site.minima.date_format | default: "%b %-d, %Y" -%}
-      {%- for post in posts -%}
-      {%- unless post.categories contains "DRAFT" -%}
-      <li class="post-list-item">
-        {%- if post.cover -%}
-        <a class="post-image" href="{{ post.url | relative_url }}">
-          {%- if post.cover_small -%}
-            <img
-              class="post-cover lazy"
-              src="{{ post.cover_small | relative_url }}"
-              data-src="{{ post.cover | relative_url }}"
-              alt="{{ post.title | escape }}"
-              loading="lazy">
-          {%- else -%}
-            <img
-              class="post-cover lazy"
-              src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=="
-              data-src="{{ post.cover | relative_url }}"
-              alt="{{ post.title | escape }}"
-              loading="lazy">
-          {%- endif -%}
-        </a>
-        {%- endif -%}
-        <div class="post-list-body">
-          <span class="post-meta">{{ post.date | date: date_format }}</span>
-          <h3>
-            <a class="post-link" href="{{ post.url | relative_url }}">
-              {{ post.title | escape }}
-            </a>
-          </h3>
+      <h1 class="page-heading">{{ page.title }}</h1>
           {%- if site.show_excerpts -%}
             {{ post.excerpt }}
           {%- endif -%}
