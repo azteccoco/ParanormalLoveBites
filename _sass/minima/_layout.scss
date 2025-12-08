@@ -32,8 +32,8 @@
     display: inline-block;
     vertical-align: middle;
     margin-right: $spacing-unit * .5;
-    width: 28px;
-    height: 28px;
+    width: 36px;
+    height: 36px;
   }
 
   .site-title-text {
@@ -45,7 +45,7 @@
   @include media-query($on-palm) {
     /* On small screens show only the logo */
     .site-title-text { display: none; }
-    .site-logo { width: 36px; height: 36px; margin-right: 0; }
+    .site-logo { width: 45px; height: 45px; margin-right: 0; }
   }
 }
 
