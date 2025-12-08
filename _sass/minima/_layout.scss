@@ -47,6 +47,44 @@
   }
 }
 
+/* Adjusted on-palm layout for site title with average color background */
+@media (max-width: $on-palm) {
+  .site-title {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: $spacing-unit;
+
+    .site-logo {
+      z-index: 2;
+      width: 45px;
+      height: 45px;
+      margin-right: $spacing-unit * 0.5;
+    }
+
+    .site-title-text {
+      z-index: 2;
+      font-size: $font-size-large;
+      color: $site-title-color;
+    }
+
+    /* Average color background behind title and author */
+    &::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: $average-image-color; /* Replace with the SCSS variable for the average color */
+      filter: blur(8px);
+      z-index: 1;
+    }
+  }
+}
+
 .site-nav {
   position: absolute;
   top: 9px;
