@@ -332,24 +332,38 @@
   }
 }
 
-/* Lazy-loading placeholder blur */
-img.post-cover.lazy {
-  filter: blur(5px) saturate(.95);
-  transform: scale(1.02);
-  transition: filter 450ms ease, transform 450ms ease, opacity 400ms ease;
+/* Combined duplicate CSS classes */
+
+/* Post cover image styles */
+img.post-cover {
+  display: block;
+  object-fit: cover;
+  border-radius: 4px;
+
+  &.lazy {
+    filter: blur(.5px) saturate(.95);
+    transform: scale(1.02);
+    transition: filter 450ms ease, transform 450ms ease, opacity 400ms ease;
+
+    &.lazy-loaded {
+      filter: none;
+      transform: none;
+      opacity: 1;
+    }
+  }
 }
 
-img.post-cover.lazy.lazy-loaded {
-  filter: none;
-  transform: none;
-  opacity: 1;
-}
-
-/* Ensure thumbnails in post list also use the same blur behaviour */
-.post-list .post-image img.post-cover.lazy {
+/* Thumbnail styles for post list */
+.post-list .post-image img.post-cover {
   width: 120px;
   height: 80px;
-  object-fit: cover;
+}
+
+/* Large screen adjustments for post cover */
+@media screen and (min-width: $on-large) {
+  img.post-cover {
+    max-height: 480px;
+  }
 }
 
 .post-title,
@@ -448,5 +462,33 @@ img.post-cover.lazy.lazy-loaded {
 @media screen and (min-width: $on-large) {
   .one-half {
     width: calc(50% - (#{$spacing-unit} / 2));
+  }
+}
+
+/* Responsive styles for articles on the homepage */
+@media (max-width: $on-palm) {
+  .home .post {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .home .post img {
+    width: 100%;
+    max-width: $image-max-width; // Replace with a defined variable for image max width
+    height: auto;
+    margin-bottom: $spacing-unit * 1.5;
+  }
+
+  .home .post .post-title {
+    margin-top: $spacing-unit;
+    font-size: $font-size-large;
+  }
+
+  .home .post .post-author {
+    margin-top: $spacing-unit * 0.5;
+    font-size: $font-size-small;
+    color: $text-color-light;
   }
 }
