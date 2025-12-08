@@ -43,11 +43,7 @@
   }
 
   @include media-query($on-palm) {
-    .site-logo {
-      width: 45px;
-      height: 45px;
-      margin-right: 0;
-    }
+    .site-logo { width: 45px; height: 45px; margin-right: 0; }
   }
 }
 
@@ -72,7 +68,7 @@
     padding-top: 10px;
     text-align: center;
 
-    >svg path {
+    > svg path {
       fill: $border-color-03;
     }
   }
@@ -86,12 +82,12 @@
     cursor: pointer;
   }
 
-  input~.trigger {
+  input ~ .trigger {
     clear: both;
     display: none;
   }
 
-  input:checked~.trigger {
+  input:checked ~ .trigger {
     display: block;
     padding-bottom: 5px;
   }
@@ -106,7 +102,6 @@
     &:not(:last-child) {
       margin-right: 0;
     }
-
     margin-left: 20px;
   }
 
@@ -124,7 +119,7 @@
       display: none;
     }
 
-    input~.trigger {
+    input ~ .trigger {
       display: block;
     }
 
@@ -135,7 +130,6 @@
       &:not(:last-child) {
         margin-right: 20px;
       }
-
       margin-left: auto;
     }
   }
@@ -249,7 +243,6 @@
       height: 28px;
     }
   }
-
   .title-text {
     display: inline-block;
     line-height: 1;
@@ -257,18 +250,9 @@
 
   // On small screens show only the logo (hide the title text)
   @include media-query($on-palm) {
-    .title-text {
-      display: none;
-    }
-
-    .page-logo {
-      margin-right: 0;
-    }
-
-    .page-logo svg {
-      width: 32px;
-      height: 32px;
-    }
+    .title-text { display: none; }
+    .page-logo { margin-right: 0; }
+    .page-logo svg { width: 32px; height: 32px; }
   }
 }
 
@@ -280,7 +264,7 @@
   margin-left: 0;
   list-style: none;
 
-  >li {
+  > li {
     margin-bottom: $spacing-unit;
   }
 }
@@ -350,7 +334,7 @@
 
 /* Lazy-loading placeholder blur */
 img.post-cover.lazy {
-  filter: blur(1px) saturate(.95);
+  filter: blur(5px) saturate(.95);
   transform: scale(1.02);
   transition: filter 450ms ease, transform 450ms ease, opacity 400ms ease;
 }
@@ -382,14 +366,7 @@ img.post-cover.lazy.lazy-loaded {
 .post-content {
   margin-bottom: $spacing-unit;
 
-  h1,
-  h2,
-  h3,
-  h4,
-  h5,
-  h6 {
-    margin-top: $spacing-unit
-  }
+  h1, h2, h3, h4, h5, h6 { margin-top: $spacing-unit }
 
   h2 {
     @include relative-font-size(1.75);
@@ -414,7 +391,6 @@ img.post-cover.lazy.lazy-loaded {
   h5 {
     @include relative-font-size(1.125);
   }
-
   h6 {
     @include relative-font-size(1.0625);
   }
@@ -424,23 +400,15 @@ img.post-cover.lazy.lazy-loaded {
 .social-media-list {
   display: table;
   margin: 0 auto;
-
   li {
     float: left;
     margin: 5px 10px 5px 0;
-
-    &:last-of-type {
-      margin-right: 0
-    }
-
+    &:last-of-type { margin-right: 0 }
     a {
       display: block;
       padding: 10px 12px;
       border: 1px solid $border-color-01;
-
-      &:hover {
-        border-color: $border-color-02
-      }
+      &:hover { border-color: $border-color-02 }
     }
   }
 }
@@ -453,16 +421,12 @@ img.post-cover.lazy.lazy-loaded {
 .pagination {
   margin-bottom: $spacing-unit;
   @extend .social-media-list;
-
   li {
-
-    a,
-    div {
+    a, div {
       min-width: 41px;
       text-align: center;
       box-sizing: border-box;
     }
-
     div {
       display: block;
       padding: $spacing-unit * .25;
@@ -484,33 +448,5 @@ img.post-cover.lazy.lazy-loaded {
 @media screen and (min-width: $on-large) {
   .one-half {
     width: calc(50% - (#{$spacing-unit} / 2));
-  }
-}
-
-/* Responsive styles for articles on the homepage */
-@media (max-width: $on-palm) {
-  .home .post {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-
-  .home .post img {
-    width: 100%;
-    max-width: $image-max-width; // Replace with a defined variable for image max width
-    height: auto;
-    margin-bottom: $spacing-unit * 1.5;
-  }
-
-  .home .post .post-title {
-    margin-top: $spacing-unit;
-    font-size: $font-size-large;
-  }
-
-  .home .post .post-author {
-    margin-top: $spacing-unit * 0.5;
-    font-size: $font-size-small;
-    color: $text-color-light;
   }
 }
