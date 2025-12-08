@@ -43,8 +43,6 @@
   }
 
   @include media-query($on-palm) {
-    /* On small screens show only the logo */
-    .site-title-text { font-size: 50% }
     .site-logo { width: 45px; height: 45px; margin-right: 0; }
   }
 }
