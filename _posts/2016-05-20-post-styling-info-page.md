@@ -1,7 +1,7 @@
 ---
 layout: post
 cover: /media/zach-reiner-jekyll-island-2.jpg
-title: "- EXAMPLE POST PAGE -"
+title: "* EXAMPLE POST PAGE *"
 categories: DRAFT
 author:
   - Bart Simpson
