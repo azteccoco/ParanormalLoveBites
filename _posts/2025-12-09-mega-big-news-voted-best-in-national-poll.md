@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Mega Big News voted "Best" in National Poll
+title: Mega Big News voted "Best" in national poll
 categories: awards
 author:
   - Kiowa Honeytree
