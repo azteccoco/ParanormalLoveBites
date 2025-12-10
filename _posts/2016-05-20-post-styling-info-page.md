@@ -1,6 +1,6 @@
 ---
 layout: post
-cover: /media/MBN.png
+cover: /media/mbn.png
 title: "* EXAMPLE POST PAGE *"
 categories: DRAFT
 author:
