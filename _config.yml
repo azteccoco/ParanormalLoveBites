@@ -3,7 +3,7 @@ author:
   name: Mega Big News
   email: megabignews@gmail.com
 description: |
-  All the news you'd rather forget and some of the news you'll never remember.
+  Newsing all over you.
 theme: minima
 plugins:
   - jekyll-feed
