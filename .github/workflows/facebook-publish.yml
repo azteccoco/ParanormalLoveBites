@@ -17,13 +17,14 @@ jobs:
       - name: Install yq (YAML processor)
         run: sudo apt-get update && sudo apt-get install -y yq
 
-      # Step 1a: Set up git config for commits
+      # Step 1a: Set up git config for commits (kept, just in case a future step needs it)
       - name: Configure Git
         run: |
           git config --global user.name "GitHub Actions"
           git config --global user.email "actions@github.com"
 
       # Step 1: Find the most recently modified post file (use push range)
+      # This step finds the file and sets the path output.
       - name: Find Latest Modified Post File Path
         id: find_file
         run: |
@@ -55,62 +56,15 @@ jobs:
           echo "Found modified post: $LATEST_POST"
           echo "file_path=$LATEST_POST" >> $GITHUB_OUTPUT
 
-      # Step 1b: Rename post with today's date if it's an update (not today's date)
-      - name: Update Post Filename to Today's Date
-        id: rename_post
-        run: |
-          # Recompute changed files to be extra-safe and ensure we operate on an actually changed file
-          BEFORE=${{ github.event.before }}
-          AFTER=${{ github.event.after }}
-          CHANGED_FILES=$(git diff --name-only --diff-filter=AM $BEFORE $AFTER -- _posts/*.md || true)
-          echo "Rename step - changed files:"
-          echo "$CHANGED_FILES"
+      # NOTE: The step 'Update Post Filename to Today's Date' (Step 1b) has been REMOVED.
+      # This eliminates the file renaming and the commit that failed on DRAFT files.
 
-          # Prefer the first changed file; if none, fall back to the find_file output
-          FIRST_CHANGED=$(echo "$CHANGED_FILES" | head -n 1)
-          if [ -n "$FIRST_CHANGED" ]; then
-            POST_PATH="$FIRST_CHANGED"
-          else
-            POST_PATH=${{ steps.find_file.outputs.file_path }}
-          fi
-
-          echo "POST_PATH chosen for rename: $POST_PATH"
-          CURRENT_DATE=$(date +%Y-%m-%d)
-
-          # Extract the current date from the filename (format: YYYY-MM-DD-rest)
-          FILENAME=$(basename "$POST_PATH")
-          CURRENT_FILE_DATE=$(echo "$FILENAME" | cut -d- -f1-3)
-
-          # If the file date is not today, rename it to today's date
-          if [ "$CURRENT_FILE_DATE" != "$CURRENT_DATE" ]; then
-            echo "Post is from $CURRENT_FILE_DATE, updating to $CURRENT_DATE"
-
-            # Extract the title slug (everything after the date)
-            TITLE_SLUG=$(echo "$FILENAME" | cut -d- -f4-)
-            NEW_FILENAME="$CURRENT_DATE-$TITLE_SLUG"
-            NEW_PATH="_posts/$NEW_FILENAME"
-
-            # Rename the file
-            mv "$POST_PATH" "$NEW_PATH"
-
-            # Update the output variable
-            echo "file_path=$NEW_PATH" >> $GITHUB_OUTPUT
-
-            # Commit the rename with [skip ci]
-            git add -A
-            git commit -m "[skip ci] Update post date to $CURRENT_DATE" || true
-
-            echo "Renamed: $FILENAME -> $NEW_FILENAME"
-          else
-            echo "Post is already dated today ($CURRENT_DATE), no rename needed"
-            echo "file_path=$POST_PATH" >> $GITHUB_OUTPUT
-          fi
-
-      # Step 2: Extract Metadata, Cover Image, and Build URL
+      # Step 2: Extract Metadata and Build URL
+      # This step uses the path directly from find_file and avoids modifying the post file.
       - name: Extract Post Metadata and Build URL
         id: metadata
         run: |
-          POST_PATH=${{ steps.rename_post.outputs.file_path }}
+          POST_PATH=${{ steps.find_file.outputs.file_path }} # <-- Uses file_path from Step 1
           CURRENT_DATE=$(date +%Y-%m-%d)
           
           # Debug: Show which file we're processing
@@ -128,9 +82,9 @@ jobs:
           TITLE=$(echo "$FRONT_MATTER" | yq '.title')
           COVER_PATH=$(echo "$FRONT_MATTER" | yq '.cover')
           CATEGORIES=$(echo "$FRONT_MATTER" | yq '.categories')
-          EXISTING_MODIFIED=$(echo "$FRONT_MATTER" | yq '.modified_date')
+          # EXISTING_MODIFIED extraction is no longer needed since we are not updating the file
           
-          echo "Extracted metadata - Title: $TITLE, Categories: $CATEGORIES, Existing Modified: $EXISTING_MODIFIED"
+          echo "Extracted metadata - Title: $TITLE, Categories: $CATEGORIES"
           
           # Check if this post is a DRAFT - if so, skip posting
           if [[ "$CATEGORIES" == *"DRAFT"* ]]; then
@@ -142,6 +96,7 @@ jobs:
           FILENAME=$(basename $POST_PATH .md)
           DATE_PART=$(echo $FILENAME | cut -d- -f1-3)
           TITLE_SLUG=$(echo $FILENAME | cut -d- -f4-)
+          # The post URL uses the date part from the original filename
           POST_URL="${{ secrets.JEKYLL_BASE_URL }}/$(echo $DATE_PART | tr -s '-' '/')/$TITLE_SLUG.html"
 
           echo "Building URL from - Filename: $FILENAME, Date: $DATE_PART, Slug: $TITLE_SLUG"
@@ -154,34 +109,13 @@ jobs:
             COVER_PATH=$(echo "$COVER_PATH" | sed 's/"//g')
             echo "Cover image detected: $COVER_PATH"
           fi
-
-          # Update modified_date if it doesn't exist or is null
-          if [ -z "$EXISTING_MODIFIED" ] || [ "$EXISTING_MODIFIED" = "null" ]; then
-            echo "Adding modified_date: $CURRENT_DATE"
-            
-            # Use yq to add the modified_date field to the front matter
-            # Use eval with output redirection instead of -i flag for compatibility
-            yq eval ".modified_date = \"$CURRENT_DATE\"" "$POST_PATH" > "${POST_PATH}.tmp" && mv "${POST_PATH}.tmp" "$POST_PATH"
-            
-            # Check if the update was successful
-            if [ $? -eq 0 ]; then
-              # Commit the change with [skip ci] to prevent workflow re-trigger
-              git add $POST_PATH
-              git commit -m "[skip ci] Auto-add modified_date to $FILENAME" || true
-              MODIFIED_DATE="$CURRENT_DATE"
-              echo "Successfully added modified_date"
-            else
-              echo "Warning: Failed to update modified_date, continuing without it"
-              MODIFIED_DATE="$CURRENT_DATE"
-            fi
-          else
-            echo "Post already has modified_date: $EXISTING_MODIFIED"
-            MODIFIED_DATE="$EXISTING_MODIFIED"
-          fi
+          
+          # Set MODIFIED_DATE to a placeholder (today's date)
+          MODIFIED_DATE="$CURRENT_DATE" 
 
           echo "title=$TITLE" >> $GITHUB_OUTPUT
           echo "url=$POST_URL" >> $GITHUB_OUTPUT
-          echo "modified_date=$MODIFIED_DATE" >> $GITHUB_OUTPUT
+          echo "modified_date=$MODIFIED_DATE" >> $GITHUB_OUTPUT 
           echo "is_draft=false" >> $GITHUB_OUTPUT
           
           # Log extracted metadata for debugging
@@ -202,7 +136,7 @@ jobs:
           POST_TITLE: ${{ steps.metadata.outputs.title }}
           POST_URL: ${{ steps.metadata.outputs.url }}
         run: |
-          # The message contains the satire alert and a link.
+          # The message contains the post title and a link.
           MESSAGE="$POST_TITLE%0A%0ARead the updated story here: $POST_URL"
           
           echo "Attempting to post (or re-post) to Facebook for: $POST_URL"
