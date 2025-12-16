@@ -1,11 +1,11 @@
-name: Auto-Post New Story to Facebook
+name: Auto-Post New Article to Facebook
 
 on:
   push:
     branches:
       - main # CHANGE THIS to match your default branch (e.g., 'master')
     paths:
-      - '_posts/**' # Trigger ONLY when files in _posts change (i.e., new post published)
+      - '_posts/**' # Trigger ONLY when files in _posts change
 
 jobs:
   facebook_post:
@@ -14,46 +14,47 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Set up dependencies for file parsing
+      - name: Install dependencies
         run: sudo apt-get update && sudo apt-get install -y jq
 
-      # Step 1: Find the newest post file committed
-      - name: Find Latest Post File Path
+      # Step 1: Find only NEW post files (Files added, not modified)
+      - name: Find Latest NEW Post File Path
         id: find_file
-        # This finds the file with the most recent commit hash in the _posts folder
         run: |
-          LATEST_POST=$(git diff-tree --no-commit-id --name-only -r ${{ github.sha }} | grep '_posts/' | head -n 1)
+          # Use git diff to find files that were added (A) in the last commit
+          LATEST_POST=$(git diff-tree --no-commit-id --name-only -r --diff-filter=A ${{ github.sha }} | grep '_posts/' | head -n 1)
           echo "file_path=$LATEST_POST" >> $GITHUB_OUTPUT
           
-      # Step 2: Extract the Post Title and generate the final URL
+      # Step 2: Extract Metadata and Build URL
       - name: Extract Post Metadata and Build URL
         id: metadata
         run: |
           POST_PATH=${{ steps.find_file.outputs.file_path }}
+          
+          # If no new post file was found (it was an edit, or non-post change), exit.
           if [ -z "$POST_PATH" ]; then
-             echo "No new post detected. Exiting."
-             exit 0 # Exit successfully if no new post is found
+             echo "No new post detected (only modifications or other files). Exiting."
+             exit 0 
           fi
 
-          # 1. Extract Title from Jekyll Front Matter (assuming standard YAML format)
+          echo "Processing new post: $POST_PATH"
+
+          # 1. Extract Title
           TITLE=$(awk '/^title:/ {sub(/^title: */, ""); gsub(/"/,""); print; exit}' $POST_PATH)
           
-          # 2. Extract Filename to build the URL (e.g., 2025-12-15-my-new-post.md)
+          # 2. Extract Filename to build the URL (e.g., 2025-12-15-my-satire-piece.md)
           FILENAME=$(basename $POST_PATH .md)
           
-          # 3. Construct the URL based on standard Jekyll permalinks /YEAR/MONTH/DAY/title/
-          # This part is highly dependent on your Jekyll _config.yml permalink setting.
+          # 3. Construct the URL (Modify this line if your permalink is NOT /YEAR/MONTH/DAY/title.html)
           DATE_PART=$(echo $FILENAME | cut -d- -f1-3)
           TITLE_SLUG=$(echo $FILENAME | cut -d- -f4-)
-          
-          # Final URL: BASE_URL/YEAR/MONTH/DAY/TITLE_SLUG.html
           POST_URL="${{ secrets.JEKYLL_BASE_URL }}/$(echo $DATE_PART | tr -s '-' '/')/$TITLE_SLUG.html"
 
           echo "title=$TITLE" >> $GITHUB_OUTPUT
           echo "url=$POST_URL" >> $GITHUB_OUTPUT
-
+          
       # Step 3: Publish to Facebook via the Graph API
-      - name: Send Post to Facebook
+      - name: Send Post to Facebook with Image Link
         # Only run this step if a new post was detected and metadata extracted
         if: steps.metadata.outputs.title != ''
         env:
@@ -62,14 +63,18 @@ jobs:
           POST_TITLE: ${{ steps.metadata.outputs.title }}
           POST_URL: ${{ steps.metadata.outputs.url }}
         run: |
-          # The message is the title + the link. Facebook will automatically fetch the preview image.
+          # The message is the satire alert + a link.
           MESSAGE="$POST_TITLE%0A%0ARead the full story here: $POST_URL"
 
           echo "Attempting to post to Facebook..."
           
+          # By using the 'link' parameter, Facebook is forced to scrape your public site.
+          # It looks for the Open Graph (OG) meta tags in the HTML: 
+          # <meta property="og:image" content="https://yourdomain.com/path/to/cover.jpg">
+          # The image specified in that tag will be used as the cover image.
           curl -X POST "https://graph.facebook.com/$PAGE_ID/feed" \
             -d "message=$MESSAGE" \
             -d "link=$POST_URL" \
             -d "access_token=$FB_TOKEN"
           
-          echo "Post attempt completed."
+          echo "Post attempt completed for: $POST_URL"
