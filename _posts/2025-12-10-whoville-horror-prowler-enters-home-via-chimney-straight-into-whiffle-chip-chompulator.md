@@ -6,5 +6,4 @@ title: Whoville Horror - Prowler enters home via chimney straight into
 categories: crime
 author:
   - JujuBee McBeans
-meta: grinch
 ---
