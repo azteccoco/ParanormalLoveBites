@@ -27,11 +27,16 @@ jobs:
       - name: Find Latest Modified Post File Path
         id: find_file
         run: |
-          # Find the markdown file in _posts that was modified most recently (ls -t)
-          # This ensures we get the most relevant file when Pages CMS pushes changes.
-          LATEST_POST=$(ls -t _posts/*.md | head -n 1)
+          # Find which files in _posts were changed in this push using git
+          # This is more reliable than filesystem timestamps after checkout
+          LATEST_POST=$(git diff-tree --no-commit-id --name-only -r HEAD | grep '_posts/.*\.md$' | head -n 1)
           
-          # Check if a post was actually found (avoids errors if _posts is empty or only non-md files changed)
+          # If no files found in current commit, try the last commit that touched _posts
+          if [ -z "$LATEST_POST" ]; then
+            LATEST_POST=$(git log -1 --pretty=format:%H --name-only -- _posts/*.md | tail -n 1)
+          fi
+          
+          # Check if a post was actually found
           if [ -z "$LATEST_POST" ]; then
              echo "No post file found or modified. Exiting."
              exit 0
