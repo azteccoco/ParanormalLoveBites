@@ -22,15 +22,10 @@ layout: base
   {% endif %}
 
   {%- comment -%}
-  Sort posts by modified_date (if available) or date, in reverse chronological order.
-  This ensures recently updated posts appear at the top.
+  Note: Posts are displayed in their original date order from Jekyll.
+  To control display order, use the modified_date field in post front matter.
+  Posts with modified_date will appear to have a newer date in the post.html layout.
   {%- endcomment -%}
-  {% assign sorted_posts = "" | split: "" %}
-  {% for post in posts %}
-    {% assign post_sort_date = post.modified_date | default: post.date %}
-    {% assign sorted_posts = sorted_posts | push: post | sort: "modified_date", "date" %}
-  {% endfor %}
-  {% assign sorted_posts = sorted_posts | reverse %}
 
 
   {%- if posts.size > 0 -%}
@@ -39,7 +34,7 @@ layout: base
     {%- endif -%}
     <ul class="post-list">
       {%- assign date_format = site.minima.date_format | default: "%b %-d, %Y" -%}
-      {%- for post in sorted_posts -%}
+      {%- for post in posts -%}
       {%- unless post.categories contains "DRAFT" -%}
       <li class="post-list-item">
         {%- if post.cover -%}

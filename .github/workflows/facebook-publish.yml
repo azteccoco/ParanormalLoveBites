@@ -40,12 +40,47 @@ jobs:
           echo "Found modified post: $LATEST_POST"
           echo "file_path=$LATEST_POST" >> $GITHUB_OUTPUT
 
+      # Step 1b: Rename post with today's date if it's an update (not today's date)
+      - name: Update Post Filename to Today's Date
+        id: rename_post
+        run: |
+          POST_PATH=${{ steps.find_file.outputs.file_path }}
+          CURRENT_DATE=$(date +%Y-%m-%d)
+          
+          # Extract the current date from the filename (format: YYYY-MM-DD-rest)
+          FILENAME=$(basename "$POST_PATH")
+          CURRENT_FILE_DATE=$(echo "$FILENAME" | cut -d- -f1-3)
+          
+          # If the file date is not today, rename it to today's date
+          if [ "$CURRENT_FILE_DATE" != "$CURRENT_DATE" ]; then
+            echo "Post is from $CURRENT_FILE_DATE, updating to $CURRENT_DATE"
+            
+            # Extract the title slug (everything after the date)
+            TITLE_SLUG=$(echo "$FILENAME" | cut -d- -f4-)
+            NEW_FILENAME="$CURRENT_DATE-$TITLE_SLUG"
+            NEW_PATH="_posts/$NEW_FILENAME"
+            
+            # Rename the file
+            mv "$POST_PATH" "$NEW_PATH"
+            
+            # Update the output variable
+            echo "file_path=$NEW_PATH" >> $GITHUB_OUTPUT
+            
+            # Commit the rename with [skip ci]
+            git add -A
+            git commit -m "[skip ci] Update post date to $CURRENT_DATE"
+            
+            echo "Renamed: $FILENAME -> $NEW_FILENAME"
+          else
+            echo "Post is already dated today ($CURRENT_DATE), no rename needed"
+            echo "file_path=$POST_PATH" >> $GITHUB_OUTPUT
+          fi
+
       # Step 2: Extract Metadata, Cover Image, and Build URL
       - name: Extract Post Metadata and Build URL
         id: metadata
-        # Runs unconditionally since we checked for file existence in Step 1
         run: |
-          POST_PATH=${{ steps.find_file.outputs.file_path }}
+          POST_PATH=${{ steps.rename_post.outputs.file_path }}
           CURRENT_DATE=$(date +%Y-%m-%d)
           
           # Use yq to extract the title and cover variables from the YAML front matter
