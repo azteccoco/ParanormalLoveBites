@@ -137,22 +137,28 @@ jobs:
           FRONT_MATTER=$(awk '/^---$/{p=!p; next} p' "$POST_PATH")
           TITLE=$(echo "$FRONT_MATTER" | yq '.title')
           COVER_PATH=$(echo "$FRONT_MATTER" | yq '.cover')
-          CATEGORIES=$(echo "$FRONT_MATTER" | yq '.categories')
           EXISTING_MODIFIED=$(echo "$FRONT_MATTER" | yq '.modified_date')
+          CATEGORIES=$(echo "$FRONT_MATTER" | yq '.categories')
           
           echo "Extracted metadata - Title: $TITLE, Categories: $CATEGORIES, Existing Modified: $EXISTING_MODIFIED"
           
-          # Extract the first category as the main category for the URL
-          # Handle both string and array formats: if array, take first; if string, use as-is
-          CATEGORY=$(echo "$CATEGORIES" | yq 'if type == "array" then .[0] else . end')
-          echo "Primary category: $CATEGORY"
+          # Extract the first category - handle both string and array formats
+          if echo "$CATEGORIES" | grep -q '^\['; then
+            # It's an array - extract first element
+            CATEGORY=$(echo "$CATEGORIES" | yq '.[0]' 2>/dev/null || echo "$CATEGORIES" | sed 's/\[//;s/\]//;s/,.*//;s/"//g;s/ //g')
+          else
+            # It's a string - use as-is, remove quotes
+            CATEGORY=$(echo "$CATEGORIES" | sed 's/"//g')
+          fi
           
-          # Build URL with category: https://megabignews.com/{category}/{year}/{month}/{day}/{slug}.html
+          echo "Primary category for URL: $CATEGORY"
+          
+          # Build URL with category: {base_url}/{category}/{year}/{month}/{day}/{slug}.html
           FILENAME=$(basename "$POST_PATH" .md)
           DATE_PART=$(echo "$FILENAME" | cut -d- -f1-3)
           TITLE_SLUG=$(echo "$FILENAME" | cut -d- -f4-)
           DATE_PATH=$(echo "$DATE_PART" | tr '-' '/')
-          POST_URL="https://megabignews.com/$CATEGORY/$DATE_PATH/$TITLE_SLUG.html"
+          POST_URL="${{ secrets.JEKYLL_BASE_URL }}/$CATEGORY/$DATE_PATH/$TITLE_SLUG.html"
 
           echo "Final POST_URL: $POST_URL"
 
@@ -179,7 +185,14 @@ jobs:
           echo "url=$POST_URL" >> $GITHUB_OUTPUT
           echo "modified_date=$MODIFIED_DATE" >> $GITHUB_OUTPUT
 
-      # Step 5: Publish to Facebook
+      # Step 5: Wait for site deployment (GitHub Pages takes time to build)
+      - name: Wait for Site Deployment
+        if: steps.check_draft.outputs.is_draft != 'true'
+        run: |
+          echo "Waiting 60 seconds for site to deploy..."
+          sleep 60
+
+      # Step 6: Publish to Facebook
       - name: Send Post to Facebook
         if: steps.check_draft.outputs.is_draft != 'true' && steps.metadata.outputs.title != ''
         env:
@@ -191,6 +204,7 @@ jobs:
           MESSAGE="$POST_TITLE%0A%0ARead full story here: $POST_URL"
           
           echo "Posting to Facebook: $POST_URL"
+          echo "Facebook will scrape og:image from: $POST_URL"
           
           curl -X POST "https://graph.facebook.com/$PAGE_ID/feed" \
             -d "message=$MESSAGE" \
