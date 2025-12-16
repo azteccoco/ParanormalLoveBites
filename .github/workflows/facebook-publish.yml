@@ -137,15 +137,21 @@ jobs:
           FRONT_MATTER=$(awk '/^---$/{p=!p; next} p' "$POST_PATH")
           TITLE=$(echo "$FRONT_MATTER" | yq '.title')
           COVER_PATH=$(echo "$FRONT_MATTER" | yq '.cover')
+          CATEGORIES=$(echo "$FRONT_MATTER" | yq '.categories')
           EXISTING_MODIFIED=$(echo "$FRONT_MATTER" | yq '.modified_date')
           
-          echo "Extracted metadata - Title: $TITLE, Existing Modified: $EXISTING_MODIFIED"
+          echo "Extracted metadata - Title: $TITLE, Categories: $CATEGORIES, Existing Modified: $EXISTING_MODIFIED"
           
-          # Build URL
+          # Extract the first category as the main category for the URL
+          CATEGORY=$(echo "$CATEGORIES" | yq '.[0]')
+          echo "Primary category: $CATEGORY"
+          
+          # Build URL with category: https://megabignews.com/{category}/{year}/{month}/{day}/{slug}.html
           FILENAME=$(basename "$POST_PATH" .md)
           DATE_PART=$(echo "$FILENAME" | cut -d- -f1-3)
           TITLE_SLUG=$(echo "$FILENAME" | cut -d- -f4-)
-          POST_URL="${{ secrets.JEKYLL_BASE_URL }}/$(echo $DATE_PART | tr -s '-' '/')/$TITLE_SLUG.html"
+          DATE_PATH=$(echo "$DATE_PART" | tr '-' '/')
+          POST_URL="https://megabignews.com/$CATEGORY/$DATE_PATH/$TITLE_SLUG.html"
 
           echo "Final POST_URL: $POST_URL"
 
