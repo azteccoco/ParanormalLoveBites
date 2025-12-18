@@ -1,6 +1,6 @@
 ---
 layout: post
 cover: /media/whitehouseseppuku.png
-title: Dr. Fauci Invited to Commit Seppuku on White House Lawn to Restore Lost Honor
+title: White House Invites Dr. Fauci to Commit Seppuku to Restore Lost Honor
 categories: politics
 ---
