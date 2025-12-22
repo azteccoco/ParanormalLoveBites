@@ -10,6 +10,7 @@ plugins:
   - jekyll-seo-tag
 header_pages:
   - about.md
+  - disclaimer.md
 minima:
   skin: auto
 google_analytics: G-L7R80M8SCM
