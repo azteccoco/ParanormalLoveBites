@@ -40,7 +40,11 @@
     display: inline-block;
     vertical-align: middle;
     line-height: 1;
-    text-decoration: none;
+    text-decoration: none !important;
+  }
+
+  .site-title-text:hover {
+    text-decoration: none !important;
   }
 
   @include media-query($on-palm) {
