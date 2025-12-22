@@ -25,6 +25,11 @@
   &,
   &:visited {
     color: $site-title-color;
+    text-decoration: none;
+  }
+
+  &:hover {
+    text-decoration: none;
   }
 
   /* Logo inside the site title */
@@ -240,7 +245,7 @@
     align-items: center;
     justify-content: center;
     color: $site-title-color;
-    text-decoration: none;
+    text-decoration: none !important;
 
     svg {
       display: block;
