@@ -44,7 +44,7 @@ layout: base
             {%- if forloop.last == false %}, {% endif -%}
         {% endfor %}
       {%- endif -%}
-      {%- if page.categories -%}
+      {%- if page.categories.size > 0 -%}
           • <span class="post-category-badge">{{ page.categories }}</span>
       {%- endif -%}</p>
   </header>
