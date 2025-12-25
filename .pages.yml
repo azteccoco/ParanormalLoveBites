@@ -10,7 +10,7 @@ content:
       - { name: layout, type: string, hidden: true, default: post }
       - { name: cover, label: Cover image, type: image }
       - { name: title, label: Title, type: string, required: true }
-      - { name: categories, label: Categories, type: select, options: { values: [ "crime", "human interest", "opinion", "politics", "sports", "tech", "world", "awards", "DRAFT" ] } }
+      - { name: categories, label: Categories, type: select, options: { values: [ "crime", "human-interest", "opinion", "politics", "sports", "tech", "world", "awards", "DRAFT" ] } }
       - { name: author, label: Authors, type: string, list: true }
       - { name: meta, label: Meta, type: string }
       - { name: body, label: Body, type: rich-text }
