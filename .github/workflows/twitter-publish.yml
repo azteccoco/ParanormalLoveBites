@@ -59,7 +59,7 @@ jobs:
           fi
 
           FRONT_MATTER=$(awk '/^---$/{p=!p; next} p' "$POST_PATH")
-          CATEGORIES=$(echo "$FRONT_MATTER" | yq '.categories')
+          CATEGORIES=$(echo "$FRONT_MATTER" | yq '.categories // empty')
 
           echo "Categories: $CATEGORIES"
 
@@ -85,29 +85,47 @@ jobs:
           fi
 
           FRONT_MATTER=$(awk '/^---$/{p=!p; next} p' "$POST_PATH")
-          TITLE=$(echo "$FRONT_MATTER" | yq '.title')
-          COVER_PATH=$(echo "$FRONT_MATTER" | yq '.cover')
-          EXISTING_MODIFIED=$(echo "$FRONT_MATTER" | yq '.modified_date')
-          CATEGORIES=$(echo "$FRONT_MATTER" | yq '.categories')
+          TITLE=$(echo "$FRONT_MATTER" | yq '.title // "Untitled"')
+          EXISTING_MODIFIED=$(echo "$FRONT_MATTER" | yq '.modified_date // null')
+          CATEGORIES_RAW=$(echo "$FRONT_MATTER" | yq '.categories // empty')
 
-          echo "Extracted metadata - Title: $TITLE, Categories: $CATEGORIES, Existing Modified: $EXISTING_MODIFIED"
+          echo "Extracted metadata - Title: $TITLE, Categories: $CATEGORIES_RAW"
 
-          if echo "$CATEGORIES" | grep -q '^\['; then
-            CATEGORY=$(echo "$CATEGORIES" | yq '.[0]' 2>/dev/null || echo "$CATEGORIES" | sed 's/\[//;s/\]//;s/,.*//;s/\"//g;s/ //g')
+          # Handle categories: array or single string, strip quotes, trim
+          if echo "$CATEGORIES_RAW" | grep -q '^\['; then
+            mapfile -t CATEGORY_ARRAY < <(echo "$CATEGORIES_RAW" | yq '.[ ]' | sed 's/^"//;s/"$//;s/^[[:space:]]*//;s/[[:space:]]*$//')
           else
-            CATEGORY=$(echo "$CATEGORIES" | sed 's/\"//g')
+            IFS=',' read -ra CATEGORY_ARRAY <<< "$(echo "$CATEGORIES_RAW" | sed 's/^"//;s/"$//;s/^[[:space:]]*//;s/[[:space:]]*$//')"
           fi
 
-          echo "Primary category for URL: $CATEGORY"
+          # Build category path: join with /, lowercase, replace spaces with hyphens (e.g., "human interest" -> human/interest)
+          CATEGORY_PATH=""
+          if [ ${#CATEGORY_ARRAY[@]} -gt 0 ]; then
+            for cat in "${CATEGORY_ARRAY[@]}"; do
+              if [ -n "$cat" ] && [ "$cat" != "null" ] && [ "$cat" != "none" ]; then
+                CLEAN_CAT=$(echo "$cat" | tr '[:upper:]' '[:lower:]' | sed 's/ /-/g')
+                CATEGORY_PATH+="$CLEAN_CAT/"
+              fi
+            done
+            CATEGORY_PATH=${CATEGORY_PATH%/}
+          fi
+
+          echo "Category path for URL: /$CATEGORY_PATH"
 
           FILENAME=$(basename "$POST_PATH" .md)
           DATE_PART=$(echo "$FILENAME" | cut -d- -f1-3)
           TITLE_SLUG=$(echo "$FILENAME" | cut -d- -f4-)
           DATE_PATH=$(echo "$DATE_PART" | tr '-' '/')
-          POST_URL="${{ secrets.JEKYLL_BASE_URL }}/$CATEGORY/$DATE_PATH/$TITLE_SLUG.html"
+
+          if [ -n "$CATEGORY_PATH" ]; then
+            POST_URL="${{ secrets.JEKYLL_BASE_URL }}/$CATEGORY_PATH/$DATE_PATH/$TITLE_SLUG.html"
+          else
+            POST_URL="${{ secrets.JEKYLL_BASE_URL }}/$DATE_PATH/$TITLE_SLUG.html"
+          fi
 
           echo "Final POST_URL: $POST_URL"
 
+          # Handle modified_date
           if [ -z "$EXISTING_MODIFIED" ] || [ "$EXISTING_MODIFIED" = "null" ]; then
             echo "Adding modified_date: $CURRENT_DATE"
             yq eval ".modified_date = \"$CURRENT_DATE\"" "$POST_PATH" > "${POST_PATH}.tmp" && mv "${POST_PATH}.tmp" "$POST_PATH"
@@ -115,13 +133,10 @@ jobs:
               git add "$POST_PATH"
               git commit -m "[skip ci] Auto-add modified_date to $FILENAME" || true
               MODIFIED_DATE="$CURRENT_DATE"
-              echo "Successfully added modified_date"
             else
-              echo "Warning: Failed to update modified_date"
               MODIFIED_DATE="$CURRENT_DATE"
             fi
           else
-            echo "Post already has modified_date: $EXISTING_MODIFIED"
             MODIFIED_DATE="$EXISTING_MODIFIED"
           fi
 
@@ -147,18 +162,19 @@ jobs:
         run: |
           echo "Preparing to post to Twitter: $POST_URL"
 
-          # Prepare stripped title for recording
+          # Prepare stripped title
           POST_TITLE_RAW='${{ steps.metadata.outputs.title }}'
           POST_TITLE_STRIPPED=$(echo "$POST_TITLE_RAW" | sed 's/^"//;s/"$//')
 
-          # Initialize a minimal Node script to post the tweet using twitter-api-v2
+          # Minimal Node script - post only text + URL (image will come from Twitter Card on the page)
           cat > tweet.js <<'JS'
           const { TwitterApi } = require('twitter-api-v2');
-          const title = process.env.POST_TITLE || '';
+
+          const title = process.env.POST_TITLE?.replace(/^"|"$/g, '') || '';
           const url = process.env.POST_URL || '';
 
           if (!process.env.TWITTER_API_KEY || !process.env.TWITTER_API_KEY_SECRET || !process.env.TWITTER_ACCESS_TOKEN || !process.env.TWITTER_ACCESS_TOKEN_SECRET) {
-            console.error('Twitter API credentials are not set. Aborting.');
+            console.error('Twitter API credentials are not set.');
             process.exit(1);
           }
 
@@ -174,17 +190,15 @@ jobs:
               const tweetText = `${title}\n\nRead full story: ${url}`;
               const rw = client.readWrite;
               const res = await rw.v2.tweet(tweetText);
-              console.log('Tweet posted, id:', res.data.id);
+              console.log('Tweet posted successfully, ID:', res.data.id);
             } catch (err) {
               console.error('Error posting tweet:', err);
+              if (err.data) console.error('API error data:', JSON.stringify(err.data));
               process.exit(1);
             }
           })();
           JS
 
-          # Install the twitter client and run the script
-          npm init -y >/dev/null 2>&1 || true
+          npm init -y >/dev/null 2>&1
           npm install twitter-api-v2@1 >/dev/null 2>&1
-          # Export POST_TITLE so node sees it (keep original quoting)
-          export POST_TITLE="$POST_TITLE_STRIPPED"
           node tweet.js
