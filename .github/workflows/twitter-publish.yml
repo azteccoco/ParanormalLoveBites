@@ -135,25 +135,8 @@ jobs:
           echo "Waiting 20 seconds for site to deploy..."
           sleep 20
 
-      - name: Check if already posted to Twitter
-        if: steps.check_draft.outputs.is_draft != 'true' && steps.metadata.outputs.title != ''
-        id: check_posted
-        run: |
-          TITLE_RAW='${{ steps.metadata.outputs.title }}'
-          TITLE=$(echo "$TITLE_RAW" | sed 's/^"//;s/"$//')
-
-          SUCCESS_FILE="$TITLE"
-
-          if [ -f "$SUCCESS_FILE" ]; then
-            echo "Title already posted to Twitter: $TITLE"
-            echo "already_posted=true" >> $GITHUB_OUTPUT
-          else
-            echo "Title not found, will post"
-            echo "already_posted=false" >> $GITHUB_OUTPUT
-          fi
-
       - name: Send Post to Twitter
-        if: steps.check_draft.outputs.is_draft != 'true' && steps.metadata.outputs.title != '' && steps.check_posted.outputs.already_posted != 'true'
+        if: steps.check_draft.outputs.is_draft != 'true' && steps.metadata.outputs.title != ''
         env:
           TWITTER_API_KEY: ${{ secrets.TWITTER_API_KEY }}
           TWITTER_API_KEY_SECRET: ${{ secrets.TWITTER_API_KEY_SECRET }}
@@ -205,9 +188,3 @@ jobs:
           # Export POST_TITLE so node sees it (keep original quoting)
           export POST_TITLE="$POST_TITLE_STRIPPED"
           node tweet.js
-
-          # Create the empty success file and push
-          touch "$POST_TITLE_STRIPPED"
-          git add "$POST_TITLE_STRIPPED"
-          git commit -m "[skip ci] Record successful tweet: $POST_TITLE_STRIPPED" || true
-          git push origin "HEAD:refs/heads/${{ github.ref_name }}" || true
