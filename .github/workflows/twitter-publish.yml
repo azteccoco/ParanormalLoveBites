@@ -187,7 +187,7 @@ jobs:
 
           (async () => {
             try {
-              const tweetText = `${title}\n\n: ${url}`;
+              const tweetText = `${title}\n\nRead full story: ${url}`;
               const rw = client.readWrite;
               const res = await rw.v2.tweet(tweetText);
               console.log('Tweet posted successfully, ID:', res.data.id);
