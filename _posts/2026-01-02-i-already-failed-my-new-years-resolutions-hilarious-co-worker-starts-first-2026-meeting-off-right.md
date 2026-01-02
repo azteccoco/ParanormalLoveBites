@@ -5,5 +5,5 @@ title: '"I Already Failed My New Years Resolutions!" - Hilarious Coworker Starts
   First 2026 Meeting Off Right'
 categories: human-interest
 author:
-  - Kiowa Honeytree
+  - JujuBee McBeans
 ---
