@@ -172,6 +172,7 @@ jobs:
 
           const title = process.env.POST_TITLE || '';
           const url = process.env.POST_URL || '';
+          const tweetUrl = `${url}?t=${Date.now()}`;
 
           if (!process.env.TWITTER_API_KEY || !process.env.TWITTER_API_KEY_SECRET || !process.env.TWITTER_ACCESS_TOKEN || !process.env.TWITTER_ACCESS_TOKEN_SECRET) {
             console.error('Twitter API credentials are not set.');
@@ -187,7 +188,7 @@ jobs:
 
           (async () => {
             try {
-              const tweetText = `${title}\n\nRead full story: ${url}`;
+              const tweetText = `${title}\n\nRead full story: ${tweetUrl}`;
               const rw = client.readWrite;
               const res = await rw.v2.tweet(tweetText);
               console.log('Tweet posted successfully, ID:', res.data.id);
