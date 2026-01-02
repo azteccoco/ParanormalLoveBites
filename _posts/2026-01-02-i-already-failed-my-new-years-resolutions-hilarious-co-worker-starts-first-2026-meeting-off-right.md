@@ -1,6 +1,9 @@
 ---
 layout: post
-title: '"I Already Failed My New Years Resolutions!" - Hilarious Co-worker
-  Starts First 2026 Meeting Off Right'
+cover: /media/workjokester.png
+title: '"I Already Failed My New Years Resolutions!" - Hilarious Coworker Starts
+  First 2026 Meeting Off Right'
 categories: human-interest
+author:
+  - JujuBee McBeans
 ---
