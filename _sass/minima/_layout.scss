@@ -335,19 +335,21 @@
 /* Post page cover image */
 .post-cover-wrap {
   margin-bottom: $spacing-unit;
+  text-align: center; // Center the image horizontally
 
   img.post-cover {
     display: block;
-    max-width: 100%;
+    width: 100%;
+    max-width: 480px;
     height: auto;
-    max-height: 360px;
     object-fit: contain;
     border-radius: 4px;
+    margin: 0 auto;
   }
 
   @media screen and (min-width: $on-large) {
     img.post-cover {
-      max-height: 480px;
+      max-width: 480px;
     }
   }
 }
