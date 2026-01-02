@@ -170,7 +170,7 @@ jobs:
           cat > tweet.js <<'JS'
           const { TwitterApi } = require('twitter-api-v2');
 
-          const title = process.env.POST_TITLE?.replace(/^"|"$/g, '') || '';
+          const title = process.env.POST_TITLE || '';
           const url = process.env.POST_URL || '';
 
           if (!process.env.TWITTER_API_KEY || !process.env.TWITTER_API_KEY_SECRET || !process.env.TWITTER_ACCESS_TOKEN || !process.env.TWITTER_ACCESS_TOKEN_SECRET) {
