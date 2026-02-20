@@ -1,9 +1,7 @@
-title: Mega Big News
+title: LoveBites
 author:
-  name: Mega Big News
-  email: megabignews@gmail.com
-description: |
-  Newsing all over you.
+  name: azteccoco
+  email: lisamlee77@yahoo.com
 theme: minima
 plugins:
   - jekyll-feed
@@ -13,5 +11,3 @@ header_pages:
   - disclaimer.md
 minima:
   skin: auto
-google_analytics: G-L7R80M8SCM
-url: https://megabignews.com
