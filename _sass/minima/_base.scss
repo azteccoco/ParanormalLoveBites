@@ -23,15 +23,41 @@ body {
   color: $text-color;
   background-color: $background-color;
   -webkit-text-size-adjust: 100%;
-  -webkit-font-feature-settings: "kern" 1;
-     -moz-font-feature-settings: "kern" 1;
-       -o-font-feature-settings: "kern" 1;
-          font-feature-settings: "kern" 1;
   font-kerning: normal;
   display: flex;
   min-height: 100vh;
   flex-direction: column;
   overflow-wrap: break-word;
+  position: relative;
+}
+
+// Atmosphere background
+body::before {
+  content: "";
+  position: fixed;
+  top: -10%;
+  left: -10%;
+  width: 40%;
+  height: 40%;
+  background: rgba(139, 92, 246, 0.1);
+  filter: blur(120px);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: -1;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  bottom: -10%;
+  right: -10%;
+  width: 40%;
+  height: 40%;
+  background: rgba(79, 70, 229, 0.1);
+  filter: blur(120px);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: -1;
 }
 
 
@@ -112,24 +138,17 @@ h1, h2, h3, h4, h5, h6 {
  * Links
  */
 a {
-  color: $link-base-color;
+  color: $brand-color;
   text-decoration: none;
+  transition: color 0.3s ease;
 
   &:visited {
-    color: $link-visited-color;
+    color: $brand-color;
   }
 
   &:hover {
-    color: $link-hover-color;
-    text-decoration: underline;
-  }
-
-  .social-media-list &:hover {
+    color: lighten($brand-color, 15%);
     text-decoration: none;
-
-    .username {
-      text-decoration: underline;
-    }
   }
 }
 
