@@ -2,14 +2,25 @@
 
 // Define defaults for each variable.
 
-$base-font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", "Segoe UI Emoji", "Segoe UI Symbol", "Apple Color Emoji", Roboto, Helvetica, Arial, sans-serif !default;
-$code-font-family: "Menlo", "Inconsolata", "Consolas", "Roboto Mono", "Ubuntu Mono", "Liberation Mono", "Courier New", monospace;
-$base-font-size:   16px !default;
+$base-font-family: "Cormorant Garamond", serif !default;
+$ui-font-family: "Inter", sans-serif !default;
+$code-font-family: "JetBrains Mono", monospace;
+$base-font-size:   18px !default;
 $base-font-weight: 400 !default;
-$small-font-size:  $base-font-size * 0.875 !default;
-$base-line-height: 1.5 !default;
+$small-font-size:  $base-font-size * 0.8 !default;
+$base-line-height: 1.6 !default;
 
-$spacing-unit:     30px !default;
+$spacing-unit:     40px !default;
+
+$background-color: #050505 !default;
+$text-color:       #e0d8d0 !default;
+$site-title-color: #e0d8d0 !default;
+$brand-color:      #8b5cf6 !default; // Purple
+$accent-color:     #f43f5e !default; // Rose
+
+$border-color-01:  rgba(255, 255, 255, 0.08) !default;
+$border-color-02:  rgba(139, 92, 246, 0.3) !default;
+$border-color-03:  #6366f1 !default;
 
 $table-text-align: left !default;
 
