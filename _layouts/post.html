@@ -1,64 +1,102 @@
 ---
 layout: base
 ---
-{%- unless page.categories contains "DRAFT" -%}
-<article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
 
-  <header class="post-header">
-    {%- if page.cover -%}
-    <div class="post-cover-wrap">
-      {%- if page.cover_small -%}
-      <img
-        class="post-cover lazy"
-        src="{{ page.cover_small | relative_url }}"
-        data-src="{{ page.cover | relative_url }}"
-        alt="{{ page.title | escape }}"
-        loading="lazy">
-      {%- else -%}
-      <img
-        class="post-cover lazy"
-        src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=="
-        data-src="{{ page.cover | relative_url }}"
-        alt="{{ page.title | escape }}"
-        loading="lazy">
-      {%- endif -%}
-    </div>
-    {%- endif -%}
-    <h1 class="post-title p-name" itemprop="name headline">{{ page.title | escape }}</h1>
-    <p class="post-meta">
-      {%- assign date_format = site.minima.date_format | default: "%b %-d, %Y" -%}
-      <time class="dt-published" datetime="{{ page.date | date_to_xmlschema }}" itemprop="datePublished">
-        {{ page.date | date: date_format }}
-      </time>
-      {%- if page.modified_date -%}
-        ~ 
-        {%- assign mdate = page.modified_date | date_to_xmlschema -%}
-        <time class="dt-modified" datetime="{{ mdate }}" itemprop="dateModified">
-          {{ mdate | date: date_format }}
-        </time>
-      {%- endif -%}
-      {%- if page.author -%}
-        • {% for author in page.author %}
-          <span itemprop="author" itemscope itemtype="http://schema.org/Person">
-            <span class="p-author h-card" itemprop="name">{{ author }}</span></span>
-            {%- if forloop.last == false %}, {% endif -%}
-        {% endfor %}
-      {%- endif -%}
-      {%- if page.categories.size > 0 -%}
-          • <span class="post-category-badge">{{ page.categories }}</span>
-      {%- endif -%}</p>
-  </header>
-
-  <div class="post-content e-content" itemprop="articleBody">
-    {{ content }}
-  </div>
-
-  {%- if site.disqus.shortname -%}
-    {%- include disqus_comments.html -%}
+<div class="home">
+  {%- if page.title -%}
+    <h1 class="page-heading">{{ page.title }}</h1>
   {%- endif -%}
 
-  <a class="u-url" href="{{ page.url | relative_url }}" hidden></a>
-</article>
-{%- else -%}
-{%- comment -%}Post is a draft (front-matter `type: DRAFT`) — render nothing publicly.{% endcomment -%}
-{%- endunless -%}
+  {{ content }}
+
+
+  {%- comment -%}
+  Filter out posts whose `categories` include the `DRAFT` value so they
+  don't appear in lists. We'll skip drafts inside the loop for widest
+  compatibility with GitHub Pages' Liquid implementation.
+  {%- endcomment -%}
+  {% if site.paginate %}
+    {% assign posts = paginator.posts %}
+  {% else %}
+    {% assign posts = site.posts %}
+  {% endif %}
+
+  {%- comment -%}
+  Note: Posts are displayed in their original date order from Jekyll.
+  To control display order, use the modified_date field in post front matter.
+  Posts with modified_date will appear to have a newer date in the post.html layout.
+  {%- endcomment -%}
+
+
+  {%- if posts.size > 0 -%}
+    {%- if page.list_title -%}
+      <h2 class="post-list-heading">{{ page.list_title }}</h2>
+    {%- endif -%}
+    <ul class="post-list">
+      {%- assign date_format = site.minima.date_format | default: "%b %-d, %Y" -%}
+      {%- for post in posts -%}
+      {%- unless post.categories contains "DRAFT" -%}
+      <li class="post-list-item">
+        {%- if post.cover -%}
+        <a class="post-image" href="{{ post.url | relative_url }}">
+          {%- if post.cover_small -%}
+            <img
+              class="post-cover lazy"
+              src="{{ post.cover_small | relative_url }}"
+              data-src="{{ post.cover | relative_url }}"
+              alt="{{ post.title | escape }}"
+              loading="lazy">
+          {%- else -%}
+            <img
+              class="post-cover lazy"
+              src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=="
+              data-src="{{ post.cover | relative_url }}"
+              alt="{{ post.title | escape }}"
+              loading="lazy">
+          {%- endif -%}
+        </a>
+        {%- endif -%}
+        <div class="post-list-body">
+          <div class="flex-meta">
+            {%- if post.categories.size > 0 -%}
+              <span class="post-category-badge">{{ post.categories | first }}</span>
+            {%- endif -%}
+            <span class="post-meta">{{ post.date | date: date_format }}</span>
+          </div>
+          <h3>
+            <a class="post-link" href="{{ post.url | relative_url }}">
+              {{ post.title | escape }}
+            </a>
+          </h3>
+          {%- if site.show_excerpts -%}
+            <div class="post-excerpt italic">
+              {{ post.excerpt }}
+            </div>
+          {%- endif -%}
+        </div>
+      </li>
+      {%- endunless -%}
+      {%- endfor -%}
+    </ul>
+
+    {% if site.paginate %}
+      <div class="pager">
+        <ul class="pagination">
+        {%- if paginator.previous_page %}
+          <li><a href="{{ paginator.previous_page_path | relative_url }}" class="previous-page">{{ paginator.previous_page }}</a></li>
+        {%- else %}
+          <li><div class="pager-edge">•</div></li>
+        {%- endif %}
+          <li><div class="current-page">{{ paginator.page }}</div></li>
+        {%- if paginator.next_page %}
+          <li><a href="{{ paginator.next_page_path | relative_url }}" class="next-page">{{ paginator.next_page }}</a></li>
+        {%- else %}
+          <li><div class="pager-edge">•</div></li>
+        {%- endif %}
+        </ul>
+      </div>
+    {%- endif %}
+
+  {%- endif -%}
+
+</div>
