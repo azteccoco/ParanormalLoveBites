@@ -57,14 +57,21 @@ layout: base
         </a>
         {%- endif -%}
         <div class="post-list-body">
-          <span class="post-meta">{{ post.date | date: date_format }}</span>
+          <div class="flex-meta">
+            {%- if post.categories.size > 0 -%}
+              <span class="post-category-badge">{{ post.categories | first }}</span>
+            {%- endif -%}
+            <span class="post-meta">{{ post.date | date: date_format }}</span>
+          </div>
           <h3>
             <a class="post-link" href="{{ post.url | relative_url }}">
               {{ post.title | escape }}
             </a>
           </h3>
           {%- if site.show_excerpts -%}
-            {{ post.excerpt }}
+            <div class="post-excerpt italic">
+              {{ post.excerpt }}
+            </div>
           {%- endif -%}
         </div>
       </li>
