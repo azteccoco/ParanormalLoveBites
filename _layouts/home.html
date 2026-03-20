@@ -23,12 +23,12 @@ layout: base
       {% unless post.categories contains "DRAFT" %}
         <div class="column-item" onclick="showPost(this)">
           <span class="item-title">{{ post.title | escape }}</span>
+          <span class="item-date">{{ post.date | date: date_format }}</span>
           {% if post.excerpt %}
             <p class="item-excerpt">{{ post.excerpt | strip_html | truncatewords: 20 }}</p>
           {% endif %}
-          <span class="item-date">{{ post.date | date: date_format }}</span>
           <input type="hidden" class="post-url" value="{{ post.url | relative_url }}">
-          <input type="hidden" class="post-content" value="{{ post.content | jsonify }}">
+          <input type="hidden" class="post-content" value="{{ post.content }}">
         </div>
       {% endunless %}
     {% endfor %}
@@ -83,10 +83,16 @@ layout: base
     {% assign date_format = site.minima.date_format | default: "%b %Y" %}
     {% for post in site.posts limit: 6 %}
       {% unless post.categories contains "DRAFT" %}
-        <div style="padding:16px 24px; border-bottom:1px solid #ddd; display:flex; justify-content:space-between; align-items:baseline; font-family:'EB Garamond',serif; font-style:italic; color:#4a4040; font-size:0.95rem;">
-          <span>{{ post.title | escape }}</span>
-          <span style="font-family:'Cormorant Garamond',serif; font-size:0.68rem; color:#bbb; letter-spacing:0.08em; white-space:nowrap; margin-left:16px;">{{ post.date | date: date_format }}</span>
-        </div>
+        <a href="#" onclick="showArchivePost(this); return false;" style="text-decoration:none;">
+          <div style="padding:16px 24px; border-bottom:1px solid #ddd; display:flex; justify-content:space-between; align-items:baseline; font-family:'EB Garamond',serif; font-style:italic; color:#4a4040; font-size:0.95rem; transition:background 0.2s ease; cursor:pointer;" onmouseover="this.style.background='#ede8e2'" onmouseout="this.style.background='transparent'">
+            <span>{{ post.title | escape }}</span>
+            <span style="font-family:'Cormorant Garamond',serif; font-size:0.68rem; color:#bbb; letter-spacing:0.08em; white-space:nowrap; margin-left:16px;">{{ post.date | date: date_format }}</span>
+            <input type="hidden" class="archive-post-url" value="{{ post.url | relative_url }}">
+            <input type="hidden" class="archive-post-content" value="{{ post.content }}">
+            <input type="hidden" class="archive-post-title" value="{{ post.title | escape }}">
+            <input type="hidden" class="archive-post-date" value="{{ post.date | date: '%b %-d, %Y' }}">
+          </div>
+        </a>
       {% endunless %}
     {% endfor %}
   </div>

@@ -101,6 +101,34 @@ function resetSubmit() {
   if (questionSignature) questionSignature.value = '';
 }
 
+function showPost(element) {
+  const url = element.querySelector('.post-url').value;
+  const content = element.querySelector('.post-content').value;
+  const title = element.querySelector('.item-title').textContent;
+  const date = element.querySelector('.item-date').textContent;
+  
+  hideAll();
+  document.getElementById('postView').classList.add('active');
+  document.getElementById('articleTitle').textContent = title;
+  document.getElementById('articleMeta').textContent = date;
+  document.getElementById('articleBody').innerHTML = content;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function showArchivePost(element) {
+  const container = element.querySelector('div') || element;
+  const title = container.querySelector('.archive-post-title').value;
+  const content = container.querySelector('.archive-post-content').value;
+  const date = container.querySelector('.archive-post-date').value;
+  
+  hideAll();
+  document.getElementById('postView').classList.add('active');
+  document.getElementById('articleTitle').textContent = title;
+  document.getElementById('articleMeta').textContent = date;
+  document.getElementById('articleBody').innerHTML = content;
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
 function submitQuestion() {
   const text = document.getElementById('questionText').value.trim();
   const signature = document.getElementById('questionSignature').value.trim();

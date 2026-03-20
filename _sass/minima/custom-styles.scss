@@ -168,7 +168,7 @@ main {
 ════════════════════════════════ */
 .column-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 0;
   border: 1px solid #1a1a1a;
 }
@@ -182,8 +182,7 @@ main {
   position: relative;
 }
 
-.column-item:nth-child(even) { border-right: none; }
-.column-item:nth-last-child(-n+2) { border-bottom: none; }
+.column-item:last-child { border-bottom: none; }
 
 .column-item.featured {
   grid-column: 1 / -1;
