@@ -1,5 +1,6 @@
 ---
 layout: post
+cover: /media/flower.png
 title: Transparency Is Not Always Good !!!
 ---
 ## Some great heading (h2)
