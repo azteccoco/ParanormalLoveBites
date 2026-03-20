@@ -338,14 +338,12 @@ main {
   background: #fff;
 }
 
-/* Two-column article body — classic advice column */
+/* Single-column article body — stacked layout */
 .article-body {
   font-size: 1rem;
   line-height: 1.8;
   color: #2a2020;
-  column-count: 2;
-  column-gap: 40px;
-  column-rule: 1px solid #ddd;
+  column-count: 1;
 }
 
 @media (max-width: 600px) {
