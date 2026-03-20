@@ -6,84 +6,8 @@
 <footer>
 </footer>
 
-<!-- Navigation Functions - Available on All Pages -->
+<!-- Form Functions -->
 <script>
-function hideAll() {
-  const homeView = document.getElementById('homeView');
-  const membersView = document.getElementById('membersView');
-  const archivesView = document.getElementById('archivesView');
-  
-  if (homeView) homeView.classList.add('hidden');
-  if (membersView) membersView.classList.remove('active');
-  if (archivesView) archivesView.classList.remove('active');
-}
-
-function showHome() {
-  // Check if we're already on home page
-  if (document.getElementById('homeView')) {
-    hideAll();
-    document.getElementById('homeView').classList.remove('hidden');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  } else {
-    // Navigate to home
-    window.location.href = '/';
-  }
-  return false;
-}
-
-function showMembers() {
-  // Check if we're already on home page
-  if (document.getElementById('membersView')) {
-    hideAll();
-    document.getElementById('membersView').classList.add('active');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    resetSubmit();
-  } else {
-    // Navigate to home with hash to show members view
-    window.location.href = '/#members';
-  }
-  return false;
-}
-
-function showArchives() {
-  // Check if we're already on home page
-  if (document.getElementById('archivesView')) {
-    hideAll();
-    document.getElementById('archivesView').classList.add('active');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  } else {
-    // Navigate to home with hash to show archives view
-    window.location.href = '/#archives';
-  }
-  return false;
-}
-
-function handleNavigationHash() {
-  const hash = window.location.hash.substring(1);
-  if (!hash) return;
-  
-  if (hash === 'members') {
-    const membersView = document.getElementById('membersView');
-    if (membersView) {
-      hideAll();
-      membersView.classList.add('active');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      resetSubmit();
-    }
-  } else if (hash === 'archives') {
-    const archivesView = document.getElementById('archivesView');
-    if (archivesView) {
-      hideAll();
-      archivesView.classList.add('active');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-  }
-}
-
-// Handle hash navigation on page load
-document.addEventListener('DOMContentLoaded', handleNavigationHash);
-window.addEventListener('hashchange', handleNavigationHash);
-
 function resetSubmit() {
   const submitSuccess = document.getElementById('submitSuccess');
   const submitForm = document.getElementById('submitForm');

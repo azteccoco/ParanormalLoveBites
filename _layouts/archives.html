@@ -1,0 +1,22 @@
+---
+layout: base
+---
+
+<a class="back-link" href="{{ '/' | relative_url }}">← Back to Home</a>
+<div class="article-masthead">
+  <span class="article-category">The Archives</span>
+  <h1 class="article-title">Past Dispatches from the Heart</h1>
+</div>
+<div style="border:1px solid #1a1a1a;">
+  {% assign date_format = site.minima.date_format | default: "%b %Y" %}
+  {% for post in site.posts %}
+    {% unless post.categories contains "DRAFT" %}
+      <a href="{{ post.url | relative_url }}" style="text-decoration:none; display:block; padding:16px 24px; border-bottom:1px solid #ddd; font-family:'EB Garamond',serif; font-style:italic; color:#4a4040; font-size:0.95rem; transition:background 0.2s ease;" onmouseover="this.style.background='#ede8e2'" onmouseout="this.style.background='transparent'">
+        <div style="display:flex; justify-content:space-between; align-items:baseline;">
+          <span>{{ post.title | escape }}</span>
+          <span style="font-family:'Cormorant Garamond',serif; font-size:0.68rem; color:#bbb; letter-spacing:0.08em; white-space:nowrap; margin-left:16px;">{{ post.date | date: date_format }}</span>
+        </div>
+      </a>
+    {% endunless %}
+  {% endfor %}
+</div>
