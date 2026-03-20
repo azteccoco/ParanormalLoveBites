@@ -1,4 +1,5 @@
-title: "LoveBites: Advice for the Paranormal Lovelorn"
+title: "LoveBites"
+description: "Advice for the Paranormal Lovelorn"
 author:
   name: " LB"
   email: paralovebites@gmail.com
@@ -11,3 +12,4 @@ header_pages:
   - disclaimer.md
 minima:
   skin: auto
+

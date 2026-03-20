@@ -2,101 +2,196 @@
 layout: base
 ---
 
-<div class="home">
-  {%- if page.title -%}
-    <h1 class="page-heading">{{ page.title }}</h1>
-  {%- endif -%}
+<!-- HOME VIEW -->
+<div class="home-view" id="homeView">
 
-  {{ content }}
+  <div class="section-head">
+    <div class="section-head-rule"></div>
+    <span class="section-head-label">✦ Help From the Heart ✦</span>
+    <div class="section-head-rule"></div>
+  </div>
 
-
-  {%- comment -%}
-  Filter out posts whose `categories` include the `DRAFT` value so they
-  don't appear in lists. We'll skip drafts inside the loop for widest
-  compatibility with GitHub Pages' Liquid implementation.
-  {%- endcomment -%}
-  {% if site.paginate %}
-    {% assign posts = paginator.posts %}
-  {% else %}
-    {% assign posts = site.posts %}
-  {% endif %}
-
-  {%- comment -%}
-  Note: Posts are displayed in their original date order from Jekyll.
-  To control display order, use the modified_date field in post front matter.
-  Posts with modified_date will appear to have a newer date in the post.html layout.
-  {%- endcomment -%}
-
-
-  {%- if posts.size > 0 -%}
-    {%- if page.list_title -%}
-      <h2 class="post-list-heading">{{ page.list_title }}</h2>
-    {%- endif -%}
-    <ul class="post-list">
-      {%- assign date_format = site.minima.date_format | default: "%b %-d, %Y" -%}
-      {%- for post in posts -%}
-      {%- unless post.categories contains "DRAFT" -%}
-      <li class="post-list-item">
-        {%- if post.cover -%}
-        <a class="post-image" href="{{ post.url | relative_url }}">
-          {%- if post.cover_small -%}
-            <img
-              class="post-cover lazy"
-              src="{{ post.cover_small | relative_url }}"
-              data-src="{{ post.cover | relative_url }}"
-              alt="{{ post.title | escape }}"
-              loading="lazy">
-          {%- else -%}
-            <img
-              class="post-cover lazy"
-              src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw=="
-              data-src="{{ post.cover | relative_url }}"
-              alt="{{ post.title | escape }}"
-              loading="lazy">
-          {%- endif -%}
-        </a>
-        {%- endif -%}
-        <div class="post-list-body">
-          <div class="flex-meta">
-            {%- if post.categories.size > 0 -%}
-              <span class="post-category-badge">{{ post.categories | first }}</span>
-            {%- endif -%}
-            <span class="post-meta">{{ post.date | date: date_format }}</span>
-          </div>
-          <h3>
-            <a class="post-link" href="{{ post.url | relative_url }}">
-              {{ post.title | escape }}
-            </a>
-          </h3>
-          {%- if site.show_excerpts -%}
-            <div class="post-excerpt italic">
-              {{ post.excerpt }}
-            </div>
-          {%- endif -%}
-        </div>
-      </li>
-      {%- endunless -%}
-      {%- endfor -%}
-    </ul>
-
+  <div class="column-grid" id="columnGrid">
     {% if site.paginate %}
-      <div class="pager">
-        <ul class="pagination">
-        {%- if paginator.previous_page %}
-          <li><a href="{{ paginator.previous_page_path | relative_url }}" class="previous-page">{{ paginator.previous_page }}</a></li>
-        {%- else %}
-          <li><div class="pager-edge">•</div></li>
-        {%- endif %}
-          <li><div class="current-page">{{ paginator.page }}</div></li>
-        {%- if paginator.next_page %}
-          <li><a href="{{ paginator.next_page_path | relative_url }}" class="next-page">{{ paginator.next_page }}</a></li>
-        {%- else %}
-          <li><div class="pager-edge">•</div></li>
-        {%- endif %}
-        </ul>
-      </div>
-    {%- endif %}
+      {% assign posts = paginator.posts %}
+    {% else %}
+      {% assign posts = site.posts %}
+    {% endif %}
 
-  {%- endif -%}
+    {% assign date_format = site.minima.date_format | default: "%b %-d, %Y" %}
+    {% for post in posts %}
+      {% unless post.categories contains "DRAFT" %}
+        <div class="column-item" onclick="showPost(this)">
+          <span class="item-title">{{ post.title | escape }}</span>
+          {% if post.excerpt %}
+            <p class="item-excerpt">{{ post.excerpt | strip_html | truncatewords: 20 }}</p>
+          {% endif %}
+          <span class="item-date">{{ post.date | date: date_format }}</span>
+          <input type="hidden" class="post-url" value="{{ post.url | relative_url }}">
+          <input type="hidden" class="post-content" value="{{ post.content | jsonify }}">
+        </div>
+      {% endunless %}
+    {% endfor %}
+  </div>
+
+</div>
+
+<!-- POST VIEW -->
+<div class="post-view" id="postView">
+  <a class="back-link" href="#" onclick="showHome(); return false;">← Back to Homepage</a>
+  <div class="article-masthead">
+    <h1 class="article-title" id="articleTitle"></h1>
+    <div class="article-meta" id="articleMeta"></div>
+  </div>
+  <div class="article-body" id="articleBody"></div>
+</div>
+
+<!-- MEMBERS VIEW -->
+<div class="post-view" id="membersView">
+  <a class="back-link" href="#" onclick="showHome(); return false;">← Back to Home</a>
+  <div class="article-masthead">
+    <h1 class="article-title">Ask LoveBites</h1>
+    <div class="article-meta">Write to us. We read every letter, even the ones sent from beyond.</div>
+  </div>
+  <div id="submitSuccess" style="display:none; max-width:480px; margin: 0 auto 16px; padding:18px 24px; border:1px solid #1a1a1a; background:#fff; font-family:'EB Garamond',serif; font-style:italic; font-size:1rem; color:#1a1a1a; text-align:center; line-height:1.75;">
+    Your question has been received and will be answered as time permits.<br><br>
+    <a href="#" onclick="resetSubmit(); return false;" style="font-family:'Cormorant Garamond',serif; font-size:0.8rem; letter-spacing:0.12em; text-transform:uppercase; color:#c0392b; text-decoration:none;">Submit another question</a>
+  </div>
+  <div id="submitForm" style="max-width:480px; margin: 0 auto; background:#fff; border:1px solid #ddd; padding:36px;">
+    <div style="margin-bottom:20px;">
+      <label style="display:block; font-family:'Cormorant Garamond',serif; font-style:italic; font-size:0.8rem; letter-spacing:0.12em; text-transform:uppercase; color:#888; margin-bottom:6px;">Your Question</label>
+      <textarea id="questionText" placeholder="Dear LoveBites, I have recently discovered that my beloved communicates exclusively through weather phenomena…" rows="6" style="width:100%; padding:10px 12px; border:1px solid #ddd; border-bottom:2px solid #1a1a1a; font-family:'EB Garamond',serif; font-size:1rem; font-style:italic; color:#1a1a1a; background:#fafafa; outline:none; resize:vertical; line-height:1.6;"></textarea>
+    </div>
+    <div style="margin-bottom:28px;">
+      <label style="display:block; font-family:'Cormorant Garamond',serif; font-style:italic; font-size:0.8rem; letter-spacing:0.12em; text-transform:uppercase; color:#888; margin-bottom:6px;">Sign Your Letter As <span style="color:#bbb;">(optional)</span></label>
+      <input id="questionSignature" type="text" placeholder="e.g. Bewildered in Baltimore" style="width:100%; padding:10px 12px; border:1px solid #ddd; border-bottom:2px solid #1a1a1a; font-family:'EB Garamond',serif; font-size:1rem; font-style:italic; color:#1a1a1a; background:#fafafa; outline:none;">
+    </div>
+    <div id="submitError" style="display:none; margin-bottom:16px; padding:12px 16px; border:1px solid #c0392b; background:#fff8f8; font-family:'EB Garamond',serif; font-style:italic; font-size:0.88rem; color:#c0392b;"></div>
+    <button onclick="submitQuestion()" style="width:100%; padding:12px; background:#1a1a1a; color:#fff; border:none; font-family:'Cormorant Garamond',serif; font-style:italic; font-size:0.9rem; letter-spacing:0.18em; text-transform:uppercase; cursor:pointer; transition:background 0.2s;" onmouseover="this.style.background='#c0392b'" onmouseout="this.style.background='#1a1a1a'">Send Your Letter</button>
+    <p style="margin-top:16px; font-family:'EB Garamond',serif; font-style:italic; font-size:0.82rem; color:#999; line-height:1.65; text-align:center;">Please read the <a href="#" onclick="showHome(); return false;" style="color:#1a1a1a; text-decoration:underline; text-underline-offset:2px;">disclaimer</a> below. Be advised, depending on content, some questions may not be posted.</p>
+  </div>
+</div>
+
+<!-- ARCHIVES VIEW -->
+<div class="post-view" id="archivesView">
+  <a class="back-link" href="#" onclick="showHome(); return false;">← Back to Home</a>
+  <div class="article-masthead">
+    <span class="article-category">The Archives</span>
+    <h1 class="article-title">Past Dispatches from the Heart</h1>
+    <div class="article-meta">All prior correspondence, filed by moon phase and emotional urgency.</div>
+  </div>
+  <div style="border:1px solid #1a1a1a;">
+    {% assign date_format = site.minima.date_format | default: "%b %Y" %}
+    {% for post in site.posts limit: 6 %}
+      {% unless post.categories contains "DRAFT" %}
+        <div style="padding:16px 24px; border-bottom:1px solid #ddd; display:flex; justify-content:space-between; align-items:baseline; font-family:'EB Garamond',serif; font-style:italic; color:#4a4040; font-size:0.95rem;">
+          <span>{{ post.title | escape }}</span>
+          <span style="font-family:'Cormorant Garamond',serif; font-size:0.68rem; color:#bbb; letter-spacing:0.08em; white-space:nowrap; margin-left:16px;">{{ post.date | date: date_format }}</span>
+        </div>
+      {% endunless %}
+    {% endfor %}
+  </div>
+</div>
+
+<script>
+function showPost(element) {
+  const title = element.querySelector('.item-title').textContent;
+  const date = element.querySelector('.item-date').textContent;
+  const url = element.querySelector('.post-url').value;
+  
+  document.getElementById('articleTitle').textContent = title;
+  document.getElementById('articleMeta').textContent = date;
+  
+  // Load the full post content via AJAX or navigate
+  window.location.href = url;
+}
+
+function hideAll() {
+  document.getElementById('homeView').classList.add('hidden');
+  document.getElementById('postView').classList.remove('active');
+  document.getElementById('membersView').classList.remove('active');
+  document.getElementById('archivesView').classList.remove('active');
+}
+
+function showHome() {
+  document.getElementById('homeView').classList.remove('hidden');
+  document.getElementById('postView').classList.remove('active');
+  document.getElementById('membersView').classList.remove('active');
+  document.getElementById('archivesView').classList.remove('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  return false;
+}
+
+function showMembers() {
+  hideAll();
+  document.getElementById('membersView').classList.add('active');
+  resetSubmit();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  return false;
+}
+
+function showArchives() {
+  hideAll();
+  document.getElementById('archivesView').classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  return false;
+}
+
+function resetSubmit() {
+  document.getElementById('submitSuccess').style.display = 'none';
+  document.getElementById('submitForm').style.display = 'block';
+  document.getElementById('submitError').style.display = 'none';
+  document.getElementById('questionText').value = '';
+  document.getElementById('questionSignature').value = '';
+}
+
+function submitQuestion() {
+  const text = document.getElementById('questionText').value.trim();
+  const signature = document.getElementById('questionSignature').value.trim();
+  const errEl = document.getElementById('submitError');
+
+  if (!text) {
+    errEl.textContent = 'Your letter appears to be empty. The column cannot counsel the voiceless.';
+    errEl.style.display = 'block';
+    return;
+  }
+  if (text.length < 20) {
+    errEl.textContent = 'Please elaborate. Even the briefest heartache deserves a full sentence.';
+    errEl.style.display = 'block';
+    return;
+  }
+  errEl.style.display = 'none';
+
+  const btn = document.querySelector('#submitForm button[onclick="submitQuestion()"]');
+  btn.textContent = 'Sending…';
+  btn.disabled = true;
+
+  fetch('https://formspree.io/f/xlgpvway', {
+    method: 'POST',
+    headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      question: text,
+      signature: signature || 'Anonymous',
+      _replyto: 'paralovebites@yahoo.com',
+      _subject: 'New LoveBites Question' + (signature ? ' from ' + signature : '')
+    })
+  })
+  .then(res => {
+    if (res.ok) {
+      document.getElementById('submitForm').style.display = 'none';
+      document.getElementById('submitSuccess').style.display = 'block';
+    } else {
+      return res.json().then(data => { throw new Error(data.error || 'Submission failed'); });
+    }
+  })
+  .catch(err => {
+    btn.textContent = 'Send Your Letter';
+    btn.disabled = false;
+    errEl.textContent = 'Something went astray in the ether. Please try again shortly.';
+    errEl.style.display = 'block';
+  });
+}
+</script>
+
 
 </div>
