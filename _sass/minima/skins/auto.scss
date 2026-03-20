@@ -297,29 +297,29 @@ $table-border-color: $lm-table-border-color;
     @include dm-highlight;
   }
 
-  $brand-color: var(--minima-brand-color);
-  $brand-color-light: var(--minima-brand-color-light);
-  $brand-color-dark: var(--minima-brand-color-dark);
+  $brand-color: $lm-brand-color;
+  $brand-color-light: $lm-brand-color-light;
+  $brand-color-dark: $lm-brand-color-dark;
 
-  $site-title-color: var(--minima-site-title-color);
+  $site-title-color: $lm-site-title-color;
 
-  $text-color: var(--minima-text-color);
-  $background-color: var(--minima-background-color);
-  $code-background-color: var(--minima-code-background-color);
+  $text-color: $lm-text-color;
+  $background-color: $lm-background-color;
+  $code-background-color: $lm-code-background-color;
 
-  $link-base-color: var(--minima-link-base-color);
-  $link-visited-color: var(--minima-link-visited-color);
-  $link-hover-color: var(--minima-link-hover-color);
+  $link-base-color: $lm-link-base-color;
+  $link-visited-color: $lm-link-visited-color;
+  $link-hover-color: $lm-link-hover-color;
 
-  $border-color-01: var(--minima-border-color-01);
-  $border-color-02: var(--minima-border-color-02);
-  $border-color-03: var(--minima-border-color-03);
+  $border-color-01: $lm-border-color-01;
+  $border-color-02: $lm-border-color-02;
+  $border-color-03: $lm-border-color-03;
 
-  $table-text-color: var(--minima-table-text-color);
-  $table-zebra-color: var(--minima-table-zebra-color);
-  $table-header-bg-color: var(--minima-table-header-bg-color);
-  $table-header-border: var(--minima-table-header-border);
-  $table-border-color: var(--minima-table-border-color);
+  $table-text-color: $lm-table-text-color;
+  $table-zebra-color: $lm-table-zebra-color;
+  $table-header-bg-color: $lm-table-header-bg-color;
+  $table-header-border: $lm-table-header-border;
+  $table-border-color: $lm-table-border-color;
 
 
 } @else if $color-scheme-dark {
