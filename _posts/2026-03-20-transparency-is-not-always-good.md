@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Transparency Is Not Always Good
+title: Transparency Is Not Always Good !!!
 ---
 ## Some great heading (h2)
 
