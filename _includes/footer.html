@@ -10,12 +10,10 @@
 <script>
 function hideAll() {
   const homeView = document.getElementById('homeView');
-  const postView = document.getElementById('postView');
   const membersView = document.getElementById('membersView');
   const archivesView = document.getElementById('archivesView');
   
   if (homeView) homeView.classList.add('hidden');
-  if (postView) postView.classList.remove('active');
   if (membersView) membersView.classList.remove('active');
   if (archivesView) archivesView.classList.remove('active');
 }
@@ -99,34 +97,6 @@ function resetSubmit() {
   const questionSignature = document.getElementById('questionSignature');
   if (questionText) questionText.value = '';
   if (questionSignature) questionSignature.value = '';
-}
-
-function showPost(element) {
-  const url = element.querySelector('.post-url').value;
-  const content = element.querySelector('.post-content').value;
-  const title = element.querySelector('.item-title').textContent;
-  const date = element.querySelector('.item-date').textContent;
-  
-  hideAll();
-  document.getElementById('postView').classList.add('active');
-  document.getElementById('articleTitle').textContent = title;
-  document.getElementById('articleMeta').textContent = date;
-  document.getElementById('articleBody').innerHTML = content;
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-function showArchivePost(element) {
-  const container = element.querySelector('div') || element;
-  const title = container.querySelector('.archive-post-title').value;
-  const content = container.querySelector('.archive-post-content').value;
-  const date = container.querySelector('.archive-post-date').value;
-  
-  hideAll();
-  document.getElementById('postView').classList.add('active');
-  document.getElementById('articleTitle').textContent = title;
-  document.getElementById('articleMeta').textContent = date;
-  document.getElementById('articleBody').innerHTML = content;
-  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
 function submitQuestion() {
