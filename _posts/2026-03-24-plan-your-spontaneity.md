@@ -1,7 +1,7 @@
 ---
 layout: post
 cover: /media/letter.png
-title: Plan Your Spontaneity
+title: Terms & Conditions (You Definitely Didn’t Read)
 ---
 LoveBites, 
 
