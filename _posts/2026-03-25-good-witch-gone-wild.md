@@ -5,7 +5,7 @@ title: Good Witch Gone Wild
 ---
 I have been dating a witch for three months and everything is wonderful — except she hexed my ex-girlfriend into a toad two weeks ago and hasn't changed her back. My ex and I are on good terms now, and frankly it's getting awkward at social gatherings. How do I bring this up without starting a fight?
 
--Brad
+-"Brad"
 
 &nbsp;
 
