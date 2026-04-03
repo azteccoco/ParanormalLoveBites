@@ -1,6 +1,6 @@
 ---
 layout: post
-cover: /media/LB Heart.png
+cover: /media/candle.png
 title: The Mother-in-Law From the Great Beyond
 ---
 Dear LoveBites, my mother-in-law Dorothy passed six months ago, and I had hoped — just a little — for some peace. Instead she has taken up residence in my hallway mirror, criticizes my housekeeping through unexplained cold spots, and last week appeared at the foot of my bed to remark, in her distinctive voice, that I still don't dust the baseboards. My husband says he cannot hear any of this. I believe him. She was always only awful to me.
