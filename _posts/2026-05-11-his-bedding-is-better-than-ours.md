@@ -8,7 +8,7 @@ Dear Love - My boyfriend's coffin is lined with 1,400 thread-count silk imported
 
 
 
-Dear Well-Rested,
+Dear Wishing,
 
 You are correct. He has curated a luxury sleeping experience for himself and offered you a promotional mattress. This is not a lifestyle difference. This is a hierarchy. Demand a bed upgrade immediately. If he cites the silk as "historically irreplaceable," remind him that so are you.
 
